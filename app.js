@@ -1,16 +1,26 @@
+// import 'path' module which provides utilities for woking with file and directory paths
 const path = require('path');
+// import 'dotenv' module that loads environment variables form a .env file into process.env
 const dotenv = require('dotenv');
 
+// load .env file contents into process.env from the root paths
 dotenv.config({ path: path.resolve(__dirname, '.env') });
 
+// import 'express' module which is a web framework for node
 const express = require('express');
+// import 'express-session' module which is a session middleware
 const session = require('express-session');
 
+
+// initiate expresss
 const app = express();
+// defining port to be environment variable PORT or else 8080
 const port = process.env.PORT || 8080;
 
+// import 'mysql' module which is a driver for node js
 const mysql = require('mysql');
 
+// defining mysql connection details for when we want to connect to the database
 const con = mysql.createConnection({
   host: process.env.MYSQL_HOST,
   user: process.env.MYSQL_USER,
@@ -18,8 +28,11 @@ const con = mysql.createConnection({
   database: process.env.MYSQL_DB,
 });
 
+// using session middleware
 app.use(session({
+  // secret is used to sign the session ID cookie
   secret: process.env.SECRET,
+  // cookie.maxAge specifies the number to use when calculating the Expires Set-Cookie Attribute.
   // cookie: { maxAge: 300000 }, 
   resave: true,
   saveUninitialized: true,
@@ -89,3 +102,5 @@ app.post('/auth', (req, res) => {
     console.log(res.end());
   }
 });
+
+
