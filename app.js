@@ -11,6 +11,8 @@ const express = require('express');
 // import 'express-session' module which is a session middleware
 const session = require('express-session');
 
+// import 'multer' which is a middleware for handling multipart/form-data, which we use for uploading filess
+const multer = require('multer');
 
 // initiate expresss
 const app = express();
@@ -104,3 +106,37 @@ app.post('/auth', (req, res) => {
 });
 
 
+// File Management - Start
+/* Multer:
+Multer is a node.js middleware for handling multipart/form-data,
+which is primarily used for uploading files.
+It is written on top of busboy for maximum efficiency.
+*/
+
+//Upload Handler
+const uploadHandler = multer.diskStorage({
+  destination: function (req, file, cb) { cb(null, `${req.query.path}`); },
+  filename: function (req, file, cb) { cb(null, file.originalname); }
+});
+
+const upload = multer({
+  storage: uploadHandler
+});
+
+app.post('/', upload.any(), (req, res) => {
+  res.status(200).send(),
+  console.log(req.files);
+  console.log('Uploading File!');
+});
+
+app.get('/filelist', (req, res) => {
+  let root;
+  let response = [];
+
+  if (req.query.path) {
+    root = `$(req.query.path})`;
+  }
+
+});
+
+// File Management - End
