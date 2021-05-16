@@ -97,6 +97,9 @@ app.post('/auth', (req, res) => {
   const { password } = req.body;
   if (username && password) {
     con.query('SELECT * FROM accounts WHERE username = ? AND password = ?', [username, password], (error, results, fields) => {
+      if (error) {
+        console.log(error);
+      } else {
       console.log('[ERROR]: ' + error);
       console.log('[RESULTS]: ' + results);
       console.log('[FIELDS]: ' + fields);
@@ -108,7 +111,7 @@ app.post('/auth', (req, res) => {
         console.log(res.send('Incorrect Username and/or Password!'));
       }
       res.end();
-    });
+    }});
   } else {
     console.log(res.send('Please enter correct Username and/or Password!'));
     console.log(res.end());
@@ -141,5 +144,29 @@ app.post('/files', upload.single('file-to-upload'), (req, res) => {
   res.redirect('/files');
 });
 
+app.get('/getfiles', (req, res) => {
+  const storageArray = fs.readdirSync('storage');
+
+  let storageObjectArray = [];
+
+  storageArray.forEach(directoryFile =>  {
+    let storageObject = {name: directoryFile, size: ""};
+
+    console.log('directory file:' + directoryFile);
+
+    const fileSizeInBytes = fs.statSync('storage/'+directoryFile).size;
+
+    storageObject.size = getFileSize(fileSizeInBytes);
+    storageObjectArray.push(storageObject);
+  });
+  res.send(storageObjectArray);
+});
+
+const getFileSize = (bytes) => {
+  if (bytes <= 1024) { return (`${bytes} Byte`); }
+  else if (bytes > 1024 && bytes <= 1048576) { return ((bytes / 1024).toPrecision(3) + ' KB'); }
+  else if (bytes > 1048576 && bytes <= 1073741824) { return ((bytes / 1048576).toPrecision(3) + ' MB'); }
+  else if (bytes > 1073741824 && bytes <= 1099511627776) { return ((bytes / 1073741824).toPrecision(3) + ' GB'); }
+};
 
 // File Management - End
