@@ -11,7 +11,7 @@ const express = require('express');
 // import 'express-session' module which is a session middleware
 const session = require('express-session');
 
-// import 'multer' which is a middleware for handling multipart/form-data, which we use for uploading filess
+// import 'multer' which is a middleware for handling multipart/form-data, which we use for uploading files
 const multer = require('multer');
 
 // initiate expresss
@@ -32,18 +32,24 @@ const con = mysql.createConnection({
 
 // using session middleware
 app.use(session({
-  // secret is used to sign the session ID cookie
+  // secret is used to sign the session ID cookie - DEPRECATED
   secret: process.env.SECRET,
-  // cookie.maxAge specifies the number to use when calculating the Expires Set-Cookie Attribute.
+  // cookie.maxAge specifies the number to use when calculating the Expires Set-Cookie Attribute
   // cookie: { maxAge: 300000 }, 
+  // resave forces the session to be saved back to the session store which is where the session data is being saved on the server
   resave: true,
+  // saveUnitialized forces the session that is unitialized to be saved in the session store as well
   saveUninitialized: true,
 }));
 
+// defining location where static files should be served from
 app.use(express.static('public'));
+// using middleware that parses json and looks only at requests where the Content-Type header matches the type option
 app.use(express.json());
+// using middleware that parses urlencoded bodies and looks at requests where Content-Type header matches the type option
 app.use(express.urlencoded({ extended: true }));
 
+// The 'fs' module enables interacting with the file system
 const fs = require('fs');
 // const { res } = require('express');
 
@@ -56,10 +62,12 @@ const server = app.listen(port, (error) => {
   }
 });
 
+// get call that serves login.html
 app.get('/', (req, res) => {
   res.sendFile(`${__dirname}/public/login.html`, 'utf-8');
 });
 
+// get call that serves files.html if the session states that the user is logged in
 app.get('/files', (req, res) => {
   if (req.session.loggedin) {
     res.sendFile(`${__dirname}/public/files.html`, 'utf-8');
@@ -69,6 +77,7 @@ app.get('/files', (req, res) => {
   // res.end();
 });
 
+// get call to test mysql connection details and status
 app.get('/mysql', (req, res) => {
   con.connect((err) => {
     if (err) throw err;
@@ -78,6 +87,7 @@ app.get('/mysql', (req, res) => {
   });
 });
 
+// post call to handle authentication
 app.post('/auth', (req, res) => {
   // console.log("req: " + req);
   // console.log("body: " + req.body);
@@ -112,31 +122,24 @@ Multer is a node.js middleware for handling multipart/form-data,
 which is primarily used for uploading files.
 It is written on top of busboy for maximum efficiency.
 */
-
-//Upload Handler
-const uploadHandler = multer.diskStorage({
-  destination: function (req, file, cb) { cb(null, `${req.query.path}`); },
-  filename: function (req, file, cb) { cb(null, file.originalname); }
+const storage = multer.diskStorage({
+  destination: function (req, file, callback) {
+      callback(null, './storage');
+  },
+  filename: function (req, file, callback) {
+      callback(null, file.originalname);
+  }
 });
 
 const upload = multer({
-  storage: uploadHandler
+  //dest: 'storage/' // this saves your file into a directory called "storage"
+  storage: storage 
+}); 
+
+app.post('/files', upload.single('file-to-upload'), (req, res) => {
+  console.log("redirect to /files")
+  res.redirect('/files');
 });
 
-app.post('/', upload.any(), (req, res) => {
-  res.status(200).send(),
-  console.log(req.files);
-  console.log('Uploading File!');
-});
-
-app.get('/filelist', (req, res) => {
-  let root;
-  let response = [];
-
-  if (req.query.path) {
-    root = `$(req.query.path})`;
-  }
-
-});
 
 // File Management - End
