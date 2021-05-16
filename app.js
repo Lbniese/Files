@@ -23,7 +23,8 @@ const port = process.env.PORT || 8080;
 const mysql = require('mysql');
 
 // defining mysql connection details for when we want to connect to the database
-const con = mysql.createConnection({
+//const con = mysql.createConnection({
+const con = mysql.createPool({
   host: process.env.MYSQL_HOST,
   user: process.env.MYSQL_USER,
   password: process.env.MYSQL_PASS,
@@ -89,10 +90,6 @@ app.get('/mysql', (req, res) => {
 
 // post call to handle authentication
 app.post('/auth', (req, res) => {
-  // console.log("req: " + req);
-  // console.log("body: " + req.body);
-  // console.log("username: " + req.body.username);
-  // console.log("password: " + req.body.password);
   const { username } = req.body;
   const { password } = req.body;
   if (username && password) {
@@ -140,7 +137,7 @@ const upload = multer({
 }); 
 
 app.post('/files', upload.single('file-to-upload'), (req, res) => {
-  console.log("redirect to /files")
+  console.log('redirect to /files')
   res.redirect('/files');
 });
 
@@ -150,17 +147,27 @@ app.get('/getfiles', (req, res) => {
   let storageObjectArray = [];
 
   storageArray.forEach(directoryFile =>  {
-    let storageObject = {name: directoryFile, size: ""};
+    let storageObject = {name: directoryFile, size: '', lastModified: ''};
 
     console.log('directory file:' + directoryFile);
 
     const fileSizeInBytes = fs.statSync('storage/'+directoryFile).size;
+
+    const fileLastModified = fs.statSync('storage/'+directoryFile).mtime;
+
+    storageObject.lastModified = getDateFormat(fileLastModified);
 
     storageObject.size = getFileSize(fileSizeInBytes);
     storageObjectArray.push(storageObject);
   });
   res.send(storageObjectArray);
 });
+
+const getDateFormat = (date) => {
+  if (date != null) {
+    return new Intl.DateTimeFormat('default').format(date) + '';
+  }
+};
 
 const getFileSize = (bytes) => {
   if (bytes <= 1024) { return (`${bytes} Byte`); }

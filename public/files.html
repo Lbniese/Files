@@ -7,6 +7,7 @@
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="assets/css/files.css">
 
       <!-- jQuery first, then Popper.js, then Bootstrap JS -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
@@ -16,9 +17,9 @@
 
     <title>Files</title>
   </head>
-  <body><script src="assets/js/index.js"></script>  
+  <body><script src="assets/js/files.js"></script>  
 
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
       <div class="container-fluid">
         <a class="navbar-brand" href="/">Files by Lukas</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -41,7 +42,7 @@
         </div>
       </div>
     </nav>
-    <br>
+    <br><br>
     <div class="container">
       <form action="/files" enctype="multipart/form-data" method="post">
         <input type="file" name="file-to-upload">
@@ -65,10 +66,12 @@
         console.log(data);
         $.each(data, (key, value) => {
           console.log(value);
-          $('#files').append(`<tr><td>${value.name}</td>
-            <td>${value.size}<td></tr>`);
+          $('#files').append(`<tr>
+            <td>${value.name}</td>
+            <td>${value.size}</td>
+            <td>${value.lastModified}</td>
+            </tr>`);
         })
-        
       });
     });
     </script>
