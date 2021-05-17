@@ -52,6 +52,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // The 'fs' module enables interacting with the file system
 const fs = require('fs');
+const { send } = require('process');
 // const { res } = require('express');
 
 // listen to a port and start web server
@@ -67,7 +68,6 @@ const header = fs.readFileSync(`${__dirname}/public/header.html`, 'utf-8');
 const footer = fs.readFileSync(`${__dirname}/public/footer.html`, 'utf-8');
 const loginpage = fs.readFileSync(`${__dirname}/public/login.html`, 'utf-8');
 const filespage = fs.readFileSync(`${__dirname}/public/files.html`, 'utf-8');
-
 
 // get call that serves login.html
 app.get('/', (req, res) => {
@@ -132,6 +132,39 @@ const upload = multer({
   storage,
 });
 
+app.get('/download/:file(*)', (req, res) => {
+  const { file } = req.params;
+  const downloadFilePath = `${path.resolve('.')}/storage/${file}`;
+
+  res.download(downloadFilePath, file, (error) => {
+    if (error) {
+      console.log(error);
+    } else {
+      console.log('Downloading successfully!');
+    }
+  });
+});
+
+app.get('/delete/:file(*)', (req, res) => {
+  console.log('Delete call was made in backend');
+  const { file } = req.params;
+  const deleteFilePath = `${path.resolve('.')}/storage/${file}`;
+
+  console.log(`deleting: ${deleteFilePath}`);
+  fs.unlink(deleteFilePath, () => {
+    console.log(`File deleted: ${deleteFilePath}`);
+    /*
+    res.send({
+      status: '200',
+      responseType: 'string',
+      response: 'success',
+    });
+    */
+    res.end();
+    res.redirect('/files');
+  });
+});
+
 app.post('/files', upload.single('file-to-upload'), (req, res) => {
   console.log('redirect to /files');
   res.redirect('/files');
@@ -154,12 +187,18 @@ app.get('/getfiles', (req, res) => {
     }
   };
 
-  const getFileSize = (bytes) => {
-    if (bytes <= 1024) { return (`${bytes} Byte`); }
-    if (bytes > 1024 && bytes <= 1048576) { return (`${(bytes / 1024).toPrecision(3)} KB`); }
-    if (bytes > 1048576 && bytes <= 1073741824) { return (`${(bytes / 1048576).toPrecision(3)} MB`); }
-    if (bytes > 1073741824 && bytes <= 1099511627776) { return (`${(bytes / 1073741824).toPrecision(3)} GB`); }
-  };
+  // credits: https://stackoverflow.com/a/18650828
+  function getFileSize(bytes, decimals = 2) {
+    if (bytes === 0) return '0 Bytes';
+
+    const k = 1024;
+    const dm = decimals < 0 ? 0 : decimals;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+
+    return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
+  }
 
   storageArray.forEach((directoryFile) => {
     const storageObject = {

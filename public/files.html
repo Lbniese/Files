@@ -20,39 +20,65 @@
   <body><script src="assets/js/files.js"></script>  
     <br><br>
     <div class="container">
+      <!-- dark mode that doesn't work
       <form action="/files" enctype="multipart/form-data" method="post">
-        <input type="file" name="file-to-upload">
-        <input type="submit" value="Upload">
+        <label class="btn btn-dark" id="select-files-label">
+          Select files<input type="file" name="file-to-upload" hidden>
+        </label>
+        <button type="submit" class="btn btn-dark" id="select-files-btn">Upload</button>
       </form>  
+    -->
+    <form action="/files" enctype="multipart/form-data" method="post">
+      <input type="file" name="file-to-upload">
+      <input type="submit" id="select-files-btn">
+    </form>  
     </div>
     <div class="container">
-      <br><br><h2>Files</h2><br>
-      <table id="files">
-        <tr>
-          <th>Name</th>
-          <th>Size</th>
-          <th>Added</th>
-          <th>Last Modified</th>
-          <th>Created</th>
-          <th>Delete</th>
-        </tr>
-      </table>
+      <br><br><h2>Files</h2>
+      <div id="files">
+          <div class="row">
+            <div class="col-3">Name</div>
+            <div class="col-1">Size</div>
+            <div class="col-2">Added</div>
+            <div class="col-2">Last Modified</div>
+            <div class="col-2">Created</div>
+            <div class="col-1">Download</div>
+            <div class="col-1">Delete</div>
+        </div>
+      </div>
     </div>
 
     <script>
     $( document ).ready(function() {
-      $.get( "/getfiles", ( data ) => {
+      $(".deleteBtn").on('click', function(event){
+        console.log('Delete call was made in frontend');
+        let fileName = $(this).attr('data-id');
+        console.log(this);
+        console.log('filename: ' + fileName);
+        $.ajax({
+          type: 'GET',
+          url: '/delete/' + fileName,
+          success: function(response) {
+            console.log(response);
+          }
+        });
+      });
+      $.get( '/getfiles', ( data ) => {
         console.log(data);
         $.each(data, (key, value) => {
-          console.log(value);
-          $('#files').append(`<tr>
-            <td>${value.name}</td>
-            <td>${value.size}</td>
-            <td>${value.added}</td>
-            <td>${value.lastModified}</td>
-            <td>${value.created}</td>
-            <td>X</td>
-            </tr>`);
+          //console.log(value);
+          $('#files').append(`
+            <div class='row filerow' title='${value.name}'>
+              <div class="col-3" style='overflow: hidden; white-space: nowrap; text-overflow: ellipsis;'>${value.name}</div>
+              <div class="col-1">${value.size}</div>
+              <div class="col-2">${value.added}</div>
+              <div class="col-2">${value.lastModified}</div>
+              <div class="col-2">${value.created}</div>
+              <div class="col-1"><a href='/download/${value.name}'><button>X</button></a></div>
+              <div class="col-1"><a href='/delete/${value.name}'><button>X</button></a></div>
+            </div>
+          
+          `);
         })
       });
     });
