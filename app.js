@@ -14,13 +14,13 @@ const session = require('express-session');
 // 'multer' is a middleware for handling multipart/form-data, which we use for file uploads
 const multer = require('multer');
 
+// import 'mysql' module which is a driver for node js
+const mysql = require('mysql');
+
 // initiate expresss
 const app = express();
 // defining port to be environment variable PORT or else 8080
 const port = process.env.PORT || 8080;
-
-// import 'mysql' module which is a driver for node js
-const mysql = require('mysql');
 
 // defining mysql connection details for when we want to connect to the database
 // const con = mysql.createConnection({
@@ -52,7 +52,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // The 'fs' module enables interacting with the file system
 const fs = require('fs');
-const { send } = require('process');
+// const { send } = require('process');
 // const { res } = require('express');
 
 // listen to a port and start web server
