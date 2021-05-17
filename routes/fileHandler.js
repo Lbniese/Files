@@ -77,6 +77,7 @@ router.get('/getfiles', (req, res) => {
         year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit',
       }).format(date)}`;
     }
+    return 'invalid data given';
   };
 
   // credits: https://stackoverflow.com/a/18650828
@@ -89,7 +90,7 @@ router.get('/getfiles', (req, res) => {
 
     const i = Math.floor(Math.log(bytes) / Math.log(k));
 
-    return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
+    return `${parseFloat((bytes / k ** i).toFixed(dm))} ${sizes[i]}`;
   }
 
   storageArray.forEach((directoryFile) => {
