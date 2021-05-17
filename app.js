@@ -142,7 +142,12 @@ app.post('/files', upload.single('file-to-upload'), (req, res) => {
 });
 
 app.get('/getfiles', (req, res) => {
-  const storageArray = fs.readdirSync('storage');
+  const dir = './storage';
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir);
+  }
+  const storageArray = fs.readdirSync(dir);
+  
 
   let storageObjectArray = [];
 
