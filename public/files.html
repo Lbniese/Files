@@ -55,7 +55,10 @@
         <tr>
           <th>Name</th>
           <th>Size</th>
+          <th>Added</th>
           <th>Last Modified</th>
+          <th>Created</th>
+          <th>Delete</th>
         </tr>
       </table>
     </div>
@@ -69,7 +72,10 @@
           $('#files').append(`<tr>
             <td>${value.name}</td>
             <td>${value.size}</td>
+            <td>${value.added}</td>
             <td>${value.lastModified}</td>
+            <td>${value.created}</td>
+            <td>X</td>
             </tr>`);
         })
       });

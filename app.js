@@ -152,17 +152,26 @@ app.get('/getfiles', (req, res) => {
   let storageObjectArray = [];
 
   storageArray.forEach(directoryFile =>  {
-    let storageObject = {name: directoryFile, size: '', lastModified: ''};
+    let storageObject = {name: directoryFile, size: '', added: '', lastModified: '', created: ''};
 
     console.log('directory file:' + directoryFile);
 
-    const fileSizeInBytes = fs.statSync('storage/'+directoryFile).size;
+    const fileSizeInBytes = fs.statSync('storage/' + directoryFile).size;
 
-    const fileLastModified = fs.statSync('storage/'+directoryFile).mtime;
+    const fileAdded = fs.statSync('storage/' + directoryFile).atime;
+
+    const fileLastModified = fs.statSync('storage/' + directoryFile).mtime;
+
+    const fileCreated = fs.statSync('storage/' + directoryFile).ctime;
+
+    storageObject.added = getDateFormat(fileAdded);
 
     storageObject.lastModified = getDateFormat(fileLastModified);
 
+    storageObject.created = getDateFormat(fileCreated);
+
     storageObject.size = getFileSize(fileSizeInBytes);
+
     storageObjectArray.push(storageObject);
   });
   res.send(storageObjectArray);
@@ -170,7 +179,7 @@ app.get('/getfiles', (req, res) => {
 
 const getDateFormat = (date) => {
   if (date != null) {
-    return new Intl.DateTimeFormat('default').format(date) + '';
+    return new Intl.DateTimeFormat('en', {year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit'}).format(date) + '';
   }
 };
 
