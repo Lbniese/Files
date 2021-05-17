@@ -17,45 +17,29 @@
 
     <title>Files</title>
   </head>
-  <body><script src="assets/js/files.js"></script>  
-    <br><br>
-    <div class="container">
-      <form action="/files" enctype="multipart/form-data" method="post">
-        <input type="file" name="file-to-upload">
-        <input type="submit" value="Upload">
-      </form>  
-    </div>
-    <div class="container">
-      <br><br><h2>Files</h2><br>
-      <table id="files">
-        <tr>
-          <th>Name</th>
-          <th>Size</th>
-          <th>Added</th>
-          <th>Last Modified</th>
-          <th>Created</th>
-          <th>Delete</th>
-        </tr>
-      </table>
-    </div>
-
-    <script>
-    $( document ).ready(function() {
-      $.get( "/getfiles", ( data ) => {
-        console.log(data);
-        $.each(data, (key, value) => {
-          console.log(value);
-          $('#files').append(`<tr>
-            <td>${value.name}</td>
-            <td>${value.size}</td>
-            <td>${value.added}</td>
-            <td>${value.lastModified}</td>
-            <td>${value.created}</td>
-            <td>X</td>
-            </tr>`);
-        })
-      });
-    });
-    </script>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="/">Files by Lukas</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <!--
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <a class="nav-link" href="#upload">Upload</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#files">Files</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
+            </li>
+          </ul>
+          -->
+        </div>
+      </div>
+    </nav>
 </body>
 </html>

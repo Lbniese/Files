@@ -11,7 +11,7 @@ const express = require('express');
 // import 'express-session' module which is a session middleware
 const session = require('express-session');
 
-// import 'multer' which is a middleware for handling multipart/form-data, which we use for uploading files
+// 'multer' is a middleware for handling multipart/form-data, which we use for file uploads
 const multer = require('multer');
 
 // initiate expresss
@@ -23,7 +23,7 @@ const port = process.env.PORT || 8080;
 const mysql = require('mysql');
 
 // defining mysql connection details for when we want to connect to the database
-//const con = mysql.createConnection({
+// const con = mysql.createConnection({
 const con = mysql.createPool({
   host: process.env.MYSQL_HOST,
   user: process.env.MYSQL_USER,
@@ -36,8 +36,8 @@ app.use(session({
   // secret is used to sign the session ID cookie - DEPRECATED
   secret: process.env.SECRET,
   // cookie.maxAge specifies the number to use when calculating the Expires Set-Cookie Attribute
-  // cookie: { maxAge: 300000 }, 
-  // resave forces the session to be saved back to the session store which is where the session data is being saved on the server
+  // cookie: { maxAge: 300000 },
+  // resave forces the session to be saved back to the session store
   resave: true,
   // saveUnitialized forces the session that is unitialized to be saved in the session store as well
   saveUninitialized: true,
@@ -45,9 +45,9 @@ app.use(session({
 
 // defining location where static files should be served from
 app.use(express.static('public'));
-// using middleware that parses json and looks only at requests where the Content-Type header matches the type option
+// using middleware that parses json and looks only at requests
 app.use(express.json());
-// using middleware that parses urlencoded bodies and looks at requests where Content-Type header matches the type option
+// using middleware that parses urlencoded bodies and looks at requests
 app.use(express.urlencoded({ extended: true }));
 
 // The 'fs' module enables interacting with the file system
@@ -63,29 +63,25 @@ const server = app.listen(port, (error) => {
   }
 });
 
+const header = fs.readFileSync(`${__dirname}/public/header.html`, 'utf-8');
+const footer = fs.readFileSync(`${__dirname}/public/footer.html`, 'utf-8');
+const loginpage = fs.readFileSync(`${__dirname}/public/login.html`, 'utf-8');
+const filespage = fs.readFileSync(`${__dirname}/public/files.html`, 'utf-8');
+
+
 // get call that serves login.html
 app.get('/', (req, res) => {
-  res.sendFile(`${__dirname}/public/login.html`, 'utf-8');
+  res.send(header + loginpage + footer);
 });
 
 // get call that serves files.html if the session states that the user is logged in
 app.get('/files', (req, res) => {
   if (req.session.loggedin) {
-    res.sendFile(`${__dirname}/public/files.html`, 'utf-8');
+    res.send(header + filespage + footer);
   } else {
     res.send('Please make sure that you are logged in');
   }
   // res.end();
-});
-
-// get call to test mysql connection details and status
-app.get('/mysql', (req, res) => {
-  con.connect((err) => {
-    if (err) throw err;
-    const sql = con.format('SHOW STATUS;');
-    console.log(sql);
-    console.log(con.query(sql));
-  });
 });
 
 // post call to handle authentication
@@ -97,24 +93,24 @@ app.post('/auth', (req, res) => {
       if (error) {
         console.log(error);
       } else {
-      console.log('[ERROR]: ' + error);
-      console.log('[RESULTS]: ' + results);
-      console.log('[FIELDS]: ' + fields);
-      if (results.length > 0) {
-        req.session.loggedin = true;
-        req.session.username = username;
-        res.redirect('/files');
-      } else {
-        console.log(res.send('Incorrect Username and/or Password!'));
+        console.log(`[ERROR]: ${error}`);
+        console.log(`[RESULTS]: ${results}`);
+        console.log(`[FIELDS]: ${fields}`);
+        if (results.length > 0) {
+          req.session.loggedin = true;
+          req.session.username = username;
+          res.redirect('/files');
+        } else {
+          console.log(res.send('Incorrect Username and/or Password!'));
+        }
+        res.end();
       }
-      res.end();
-    }});
+    });
   } else {
     console.log(res.send('Please enter correct Username and/or Password!'));
     console.log(res.end());
   }
 });
-
 
 // File Management - Start
 /* Multer:
@@ -123,21 +119,21 @@ which is primarily used for uploading files.
 It is written on top of busboy for maximum efficiency.
 */
 const storage = multer.diskStorage({
-  destination: function (req, file, callback) {
-      callback(null, './storage');
+  destination(req, file, callback) {
+    callback(null, './storage');
   },
-  filename: function (req, file, callback) {
-      callback(null, file.originalname);
-  }
+  filename(req, file, callback) {
+    callback(null, file.originalname);
+  },
 });
 
 const upload = multer({
-  //dest: 'storage/' // this saves your file into a directory called "storage"
-  storage: storage 
-}); 
+  // dest: 'storage/' // this saves your file into a directory called "storage"
+  storage,
+});
 
 app.post('/files', upload.single('file-to-upload'), (req, res) => {
-  console.log('redirect to /files')
+  console.log('redirect to /files');
   res.redirect('/files');
 });
 
@@ -147,22 +143,38 @@ app.get('/getfiles', (req, res) => {
     fs.mkdirSync(dir);
   }
   const storageArray = fs.readdirSync(dir);
-  
 
-  let storageObjectArray = [];
+  const storageObjectArray = [];
 
-  storageArray.forEach(directoryFile =>  {
-    let storageObject = {name: directoryFile, size: '', added: '', lastModified: '', created: ''};
+  const getDateFormat = (date) => {
+    if (date != null) {
+      return `${new Intl.DateTimeFormat('en', {
+        year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit',
+      }).format(date)}`;
+    }
+  };
 
-    console.log('directory file:' + directoryFile);
+  const getFileSize = (bytes) => {
+    if (bytes <= 1024) { return (`${bytes} Byte`); }
+    if (bytes > 1024 && bytes <= 1048576) { return (`${(bytes / 1024).toPrecision(3)} KB`); }
+    if (bytes > 1048576 && bytes <= 1073741824) { return (`${(bytes / 1048576).toPrecision(3)} MB`); }
+    if (bytes > 1073741824 && bytes <= 1099511627776) { return (`${(bytes / 1073741824).toPrecision(3)} GB`); }
+  };
 
-    const fileSizeInBytes = fs.statSync('storage/' + directoryFile).size;
+  storageArray.forEach((directoryFile) => {
+    const storageObject = {
+      name: directoryFile, size: '', added: '', lastModified: '', created: '',
+    };
 
-    const fileAdded = fs.statSync('storage/' + directoryFile).atime;
+    console.log(`directory file:${directoryFile}`);
 
-    const fileLastModified = fs.statSync('storage/' + directoryFile).mtime;
+    const fileSizeInBytes = fs.statSync(`storage/${directoryFile}`).size;
 
-    const fileCreated = fs.statSync('storage/' + directoryFile).ctime;
+    const fileAdded = fs.statSync(`storage/${directoryFile}`).atime;
+
+    const fileLastModified = fs.statSync(`storage/${directoryFile}`).mtime;
+
+    const fileCreated = fs.statSync(`storage/${directoryFile}`).ctime;
 
     storageObject.added = getDateFormat(fileAdded);
 
@@ -176,18 +188,5 @@ app.get('/getfiles', (req, res) => {
   });
   res.send(storageObjectArray);
 });
-
-const getDateFormat = (date) => {
-  if (date != null) {
-    return new Intl.DateTimeFormat('en', {year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit'}).format(date) + '';
-  }
-};
-
-const getFileSize = (bytes) => {
-  if (bytes <= 1024) { return (`${bytes} Byte`); }
-  else if (bytes > 1024 && bytes <= 1048576) { return ((bytes / 1024).toPrecision(3) + ' KB'); }
-  else if (bytes > 1048576 && bytes <= 1073741824) { return ((bytes / 1048576).toPrecision(3) + ' MB'); }
-  else if (bytes > 1073741824 && bytes <= 1099511627776) { return ((bytes / 1073741824).toPrecision(3) + ' GB'); }
-};
 
 // File Management - End
