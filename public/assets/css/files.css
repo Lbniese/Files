@@ -4,10 +4,6 @@ table {
     width: 100%;
 }
 
-.filerow {
-    /*cursor: pointer;*/
-}
-
 .filerow:hover {
     border-radius: 10px;
     border: black;
