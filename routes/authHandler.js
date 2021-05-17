@@ -20,13 +20,21 @@ router.post('/register', (req, res) => {
     con.query('INSERT INTO accounts (username, password) VALUES (?, ?)', [username, password], (error, results, fields) => {
       if (error) {
         console.log(error);
-      } else if (results.length > 0) {
-        res.redirect('/');
+      } else {
+        if (results.length > 0) {
+          res.redirect('/');
+        } else {
+          // console.log(res.send(`Looks like an error occured: ${error}`));
+          res.redirect('/');
+        }
+        res.end();
       }
     });
+    // console.log(res.end());
+    // res.redirect('/');
+  } else {
     console.log(res.end());
   }
-  res.redirect('/');
 });
 
 // post call to handle authentication
