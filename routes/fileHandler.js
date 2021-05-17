@@ -73,7 +73,7 @@ router.get('/getfiles', (req, res) => {
 
   const getDateFormat = (date) => {
     if (date != null) {
-      return `${new Intl.DateTimeFormat('en', {
+      return `${new Intl.DateTimeFormat('da-DK', {
         year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit',
       }).format(date)}`;
     }
@@ -95,7 +95,8 @@ router.get('/getfiles', (req, res) => {
 
   storageArray.forEach((directoryFile) => {
     const storageObject = {
-      name: directoryFile, size: '', added: '', lastModified: '', created: '',
+      // name: directoryFile, size: '', added: '', lastModified: '', created: '',
+      name: directoryFile, size: '', added: '', extension: '',
     };
 
     console.log(`directory file:${directoryFile}`);
@@ -104,17 +105,21 @@ router.get('/getfiles', (req, res) => {
 
     const fileAdded = fs.statSync(`storage/${directoryFile}`).atime;
 
-    const fileLastModified = fs.statSync(`storage/${directoryFile}`).mtime;
+    // const fileLastModified = fs.statSync(`storage/${directoryFile}`).mtime;
 
-    const fileCreated = fs.statSync(`storage/${directoryFile}`).ctime;
+    // const fileCreated = fs.statSync(`storage/${directoryFile}`).ctime;
+
+    const fileExtension = path.extname(directoryFile);
+
+    storageObject.size = getFileSize(fileSizeInBytes);
 
     storageObject.added = getDateFormat(fileAdded);
 
-    storageObject.lastModified = getDateFormat(fileLastModified);
+    // storageObject.lastModified = getDateFormat(fileLastModified);
 
-    storageObject.created = getDateFormat(fileCreated);
+    // storageObject.created = getDateFormat(fileCreated);
 
-    storageObject.size = getFileSize(fileSizeInBytes);
+    storageObject.extension = fileExtension;
 
     storageObjectArray.push(storageObject);
   });

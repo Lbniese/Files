@@ -1,111 +1,104 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1, shrink-to-fit=no"
-    />
-
-    <!-- Font Awesome CSS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-
-    <!-- Bootstrap CSS -->
-    <link
-      rel="stylesheet"
-      href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
-      integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
-      crossorigin="anonymous"
-    />
-    <link rel="stylesheet" href="assets/css/files.css" />
-
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script
-      src="https://code.jquery.com/jquery-3.6.0.min.js"
-      integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
-      crossorigin="anonymous"
-    ></script>
-    <script
-      src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
-      integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
-      crossorigin="anonymous"
-    ></script>
-    <script
-      src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
-      integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
-      crossorigin="anonymous"
-    ></script>
-
-    <title>Files</title>
-  </head>
-  <body>
-    <script src="assets/js/files.js"></script>
-    <br /><br />
-    <div class="container">
-      <!-- dark mode that doesn't work
-      <form action="/files" enctype="multipart/form-data" method="post">
-        <label class="btn btn-dark" id="select-files-label">
-          Select files<input type="file" name="file-to-upload" hidden>
-        </label>
-        <button type="submit" class="btn btn-dark" id="select-files-btn">Upload</button>
-      </form>  
-    -->
-      <form action="/files" enctype="multipart/form-data" method="post">
-        <input type="file" name="file-to-upload" />
-        <input type="submit" id="select-files-btn" />
-      </form>
-    </div>
-    <div class="container">
-      <br /><br />
-      <h2>Files</h2>
-      <div id="files">
-        <div class="row">
-          <div class="col-3">Name</div>
-          <div class="col-1">Size</div>
-          <div class="col-2">Added</div>
-          <div class="col-2">Last Modified</div>
-          <div class="col-2">Created</div>
-          <div class="col-1">Download</div>
-          <div class="col-1">Delete</div>
+    <head>
+        <!-- Required meta tags -->
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <!-- Font Awesome CSS -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+        <!-- Bootstrap CSS -->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous" />
+        <link rel="stylesheet" href="assets/css/files.css" />
+        <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+        <title>Files</title>
+    </head>
+    <body>
+        <script src="assets/js/files.js"></script>
+        <br />
+        <br />
+        <div class="container">
+            <form class="custom-file" action="/files" enctype="multipart/form-data" method="post">
+                <div class="mb-5">
+                    <h2>File Upload</h2>
+                    <div class="container">
+                        <div class="form-group">
+                            <div class="input-group">
+                                <span class="input-group-btn">
+                                    <button class="btn btn-dark" type="button" id="file-to-upload-browse">Browse...</button>
+                                </span>
+                                <input type="file" id="file-to-upload" name="file-to-upload" style="display: none;" />
+                                <input type="text" class="form-control" id="file-to-upload-fake" readonly />
+                                <button type="submit" class="btn btn-dark">Submit</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
         </div>
-      </div>
-    </div>
-
-    <script>
-      $(document).ready(function () {
-        $(".deleteBtn").on("click", function (event) {
-          console.log("Delete call was made in frontend");
-          let fileName = $(this).attr("data-id");
-          console.log(this);
-          console.log("filename: " + fileName);
-          $.ajax({
-            type: "GET",
-            url: "/delete/" + fileName,
-            success: function (response) {
-              console.log(response);
-            },
-          });
-        });
-        $.get("/getfiles", (data) => {
-          console.log(data);
-          $.each(data, (key, value) => {
-            //console.log(value);
-            $("#files").append(`
-            <div class='row filerow top-buffer' title='${value.name}'>
-              <div class="col-3" style='overflow: hidden; white-space: nowrap; text-overflow: ellipsis;'>${value.name}</div>
-              <div class="col-1">${value.size}</div>
-              <div class="col-2">${value.added}</div>
-              <div class="col-2">${value.lastModified}</div>
-              <div class="col-2">${value.created}</div>
-              <div class="col-1"><a href='/download/${value.name}' class='btn btn-success'><i class="fas fa-download"></i></a></div>
-              <div class="col-1"><a href='/delete/${value.name}' class='btn btn-danger'><i class="fas fa-trash"></i></a></div>
+        <br>
+        <div class="container">
+            <br />
+            <br />
+            <h2>Files</h2>
+            <div id="files">
+                <div class="row btn-dark">
+                    <div class="col-4">Name</div>
+                    <div class="col-2">Size</div>
+                    <div class="col-2">Added</div>
+                    <div class="col-2">Extension</div>
+                    <div class="col-1">Download</div>
+                    <div class="col-1">Delete</div>
+                </div>
             </div>
+        </div>
+        <br><br>
+        <div class="container">
+          <h2>Chat Messages</h2>
           
-          `);
-          });
-        });
-      });
-    </script>
-  </body>
+        </div>
+
+
+        <script>
+            $(document).ready(function () {
+                $("#file-to-upload-browse, #file-to-upload-fake").on("click", function () {
+                    $("#file-to-upload").trigger("click");
+                });
+                $("#file-to-upload").change(function () {
+                    var file_name = this.value.replace(/\\/g, "/").replace(/.*\//, "");
+                    $("#file-to-upload-fake").val(file_name);
+                });
+                $(".deleteBtn").on("click", function (event) {
+                    console.log("Delete call was made in frontend");
+                    let fileName = $(this).attr("data-id");
+                    console.log(this);
+                    console.log("filename: " + fileName);
+                    $.ajax({
+                        type: "GET",
+                        url: "/delete/" + fileName,
+                        success: function (response) {
+                            console.log(response);
+                        },
+                    });
+                });
+                $.get("/getfiles", (data) => {
+                    console.log(data);
+                    $.each(data, (key, value) => {
+                    $("#files").append(`
+                      <div class='row filerow top-buffer' title='${value.name}'>
+                        <div class="col-4" style='overflow: hidden; white-space: nowrap; text-overflow: ellipsis;'>${value.name}</div>
+                        <div class="col-2">${value.size}</div>
+                        <div class="col-2">${value.added}</div>
+                        <div class="col-2">${value.extension}</div>
+                        <div class="col-1"><a href='/download/${value.name}' class='btn btn-success'><i class="fas fa-download"></i></a></div>
+                        <div class="col-1"><a href='/delete/${value.name}' class='btn btn-danger'><i class="fas fa-trash"></i></a></div>
+                      </div>
+                     `);
+                    });
+                });
+            });
+        </script>
+    </body>
 </html>
