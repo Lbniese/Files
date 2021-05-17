@@ -61,10 +61,15 @@ const header = fs.readFileSync(`${__dirname}/public/header.html`, 'utf-8');
 const footer = fs.readFileSync(`${__dirname}/public/footer.html`, 'utf-8');
 const loginpage = fs.readFileSync(`${__dirname}/public/login.html`, 'utf-8');
 const filespage = fs.readFileSync(`${__dirname}/public/files.html`, 'utf-8');
+const registerpage = fs.readFileSync(`${__dirname}/public/register.html`, 'utf-8');
 
 // get call that serves login.html
 app.get('/', (req, res) => {
   res.send(header + loginpage + footer);
+});
+
+app.get('/register', (req, res) => {
+  res.send(header + registerpage + footer);
 });
 
 // get call that serves files.html if the session states that the user is logged in

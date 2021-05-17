@@ -12,6 +12,23 @@ const con = mysql.createPool({
   database: process.env.MYSQL_DB,
 });
 
+router.post('/register', (req, res) => {
+  const { username } = req.body;
+  const { password } = req.body;
+
+  if (username && password) {
+    con.query('INSERT INTO accounts (username, password) VALUES (?, ?)', [username, password], (error, results, fields) => {
+      if (error) {
+        console.log(error);
+      } else if (results.length > 0) {
+        res.redirect('/');
+      }
+    });
+    console.log(res.end());
+  }
+  res.redirect('/');
+});
+
 // post call to handle authentication
 router.post('/auth', (req, res) => {
   const { username } = req.body;
