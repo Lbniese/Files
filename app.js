@@ -160,7 +160,7 @@ app.get('/delete/:file(*)', (req, res) => {
       response: 'success',
     });
     */
-    res.end();
+    // res.end();
     res.redirect('/files');
   });
 });
