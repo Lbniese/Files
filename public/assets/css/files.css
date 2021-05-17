@@ -8,3 +8,7 @@ table {
     border-radius: 10px;
     border: black;
 }
+
+.top-buffer {
+    margin-top: 0.5rem;
+}

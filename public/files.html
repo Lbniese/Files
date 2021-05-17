@@ -8,6 +8,9 @@
       content="width=device-width, initial-scale=1, shrink-to-fit=no"
     />
 
+    <!-- Font Awesome CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
     <!-- Bootstrap CSS -->
     <link
       rel="stylesheet"
@@ -69,8 +72,6 @@
       </div>
     </div>
 
-    <div class="container"><form action=/''</div>
-
     <script>
       $(document).ready(function () {
         $(".deleteBtn").on("click", function (event) {
@@ -91,14 +92,14 @@
           $.each(data, (key, value) => {
             //console.log(value);
             $("#files").append(`
-            <div class='row filerow' title='${value.name}'>
+            <div class='row filerow top-buffer' title='${value.name}'>
               <div class="col-3" style='overflow: hidden; white-space: nowrap; text-overflow: ellipsis;'>${value.name}</div>
               <div class="col-1">${value.size}</div>
               <div class="col-2">${value.added}</div>
               <div class="col-2">${value.lastModified}</div>
               <div class="col-2">${value.created}</div>
-              <div class="col-1"><a href='/download/${value.name}'><button>X</button></a></div>
-              <div class="col-1"><a href='/delete/${value.name}'><button>X</button></a></div>
+              <div class="col-1"><a href='/download/${value.name}' class='btn btn-success'><i class="fas fa-download"></i></a></div>
+              <div class="col-1"><a href='/delete/${value.name}' class='btn btn-danger'><i class="fas fa-trash"></i></a></div>
             </div>
           
           `);
