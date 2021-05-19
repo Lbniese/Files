@@ -42,6 +42,10 @@ const fs = require('fs');
 // const { send } = require('process');
 // const { res } = require('express');
 
+const server = require('http').createServer(app);
+
+const io = require('socket.io')(server);
+
 const fileHandlerRouter = require('./routes/fileHandler.js');
 const authHandlerRouter = require('./routes/authHandler.js');
 
@@ -49,7 +53,8 @@ app.use(fileHandlerRouter.router);
 app.use(authHandlerRouter.router);
 
 // listen to a port and start web server
-const server = app.listen(port, (error) => {
+// const server = app.listen(port, (error) => {
+server.listen(port, (error) => {
   if (error) {
     console.log(error);
   } else {
@@ -63,6 +68,8 @@ const loginpage = fs.readFileSync(`${__dirname}/public/login.html`, 'utf-8');
 const filespage = fs.readFileSync(`${__dirname}/public/files.html`, 'utf-8');
 const registerpage = fs.readFileSync(`${__dirname}/public/register.html`, 'utf-8');
 
+let user = null;
+
 // get call that serves login.html
 app.get('/', (req, res) => {
   res.send(header + loginpage + footer);
@@ -75,9 +82,36 @@ app.get('/register', (req, res) => {
 // get call that serves files.html if the session states that the user is logged in
 app.get('/files', (req, res) => {
   if (req.session.loggedin) {
+    user = req.session.username;
     res.send(header + filespage + footer);
   } else {
     res.send('Please make sure that you are logged in');
   }
   // res.end();
 });
+
+// SOCKET - START
+io.on('connection', (socket) => {
+  // console.log('New user connected');
+
+  // default username
+  socket.username = user;
+
+  // listen on change_username
+  socket.on('change_username', (data) => {
+    socket.username = data.username;
+  });
+
+  // listen on new_message
+  socket.on('new_message', (data) => {
+    // broadcast the new message
+    io.sockets.emit('new_message', { message: data.message, username: socket.username });
+  });
+
+  // listen on typing
+  socket.on('typing', (data) => {
+    socket.broadcast.emit('typing', { username: socket.username });
+  });
+});
+
+// SOCKET - END

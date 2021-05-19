@@ -20,6 +20,7 @@ router.post('/register', (req, res) => {
     con.query('INSERT INTO accounts (username, password) VALUES (?, ?)', [username, password], (error, results, fields) => {
       if (error) {
         console.log(error);
+        res.send('Username is already taken');
       } else {
         if (results.length > 0) {
           res.redirect('/');
