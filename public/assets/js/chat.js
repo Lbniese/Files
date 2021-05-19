@@ -1,6 +1,8 @@
 $(() => {
   // make connection
-  const socket = io.connect('https://files1.herokuapp.com/:8080');
+  //const socket = io.connect('https://files1.herokuapp.com/:8080');
+
+  const socket = io();
 
   // buttons and inputs
   const message = $('#message');
