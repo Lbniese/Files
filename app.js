@@ -15,6 +15,16 @@ const app = express();
 // import 'express-session' module which is a session middleware
 const session = require('express-session');
 
+const cors = require('cors');
+
+app.use(cors());
+
+app.all('/*', (req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Headers', 'X-Requested-With');
+  next();
+});
+
 // defining port to be environment variable PORT or else 8080
 const port = process.env.PORT || 8080;
 
@@ -25,9 +35,9 @@ app.use(session({
   // cookie.maxAge specifies the number to use when calculating the Expires Set-Cookie Attribute
   // cookie: { maxAge: 300000 },
   // resave forces the session to be saved back to the session store
-  resave: true,
+  resave: false,
   // saveUnitialized forces the session that is unitialized to be saved in the session store as well
-  saveUninitialized: true,
+  saveUninitialized: false,
 }));
 
 // defining location where static files should be served from
@@ -42,14 +52,19 @@ const fs = require('fs');
 // const { send } = require('process');
 // const { res } = require('express');
 
+// hello?
+const server = require('http').createServer(app);
+
 const fileHandlerRouter = require('./routes/fileHandler.js');
 const authHandlerRouter = require('./routes/authHandler.js');
+const chatHandlerRouter = require('./routes/chatHandler.js');
 
 app.use(fileHandlerRouter.router);
 app.use(authHandlerRouter.router);
+app.use(chatHandlerRouter.router);
 
 // listen to a port and start web server
-const server = app.listen(port, (error) => {
+server.listen(port, (error) => {
   if (error) {
     console.log(error);
   } else {

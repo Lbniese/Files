@@ -17,12 +17,13 @@
     </head>
     <body>
         <script src="assets/js/files.js"></script>
-        <br />
-        <br />
+        <br>
+        <br>
+        <!-- File Upload Section - START -->
         <div class="container">
             <form class="custom-file" action="/files" enctype="multipart/form-data" method="post">
                 <div class="mb-5">
-                    <h2>File Upload</h2>
+                    <h3>File Upload</h2>
                     <div class="container">
                         <div class="form-group">
                             <div class="input-group">
@@ -39,10 +40,13 @@
             </form>
         </div>
         <br>
+        <!-- File Upload Section - END -->
+
+        <!-- File Directory Display - START -->
         <div class="container">
             <br />
             <br />
-            <h2>Files</h2>
+            <h3>Files</h2>
             <div id="files">
                 <div class="row btn-dark">
                     <div class="col-4">Name</div>
@@ -55,12 +59,19 @@
             </div>
         </div>
         <br><br>
-        <div class="container">
-          <h2>Chat Messages</h2>
-          
+        <!-- File Directory Display - END -->
+
+        <!-- Sockets Chat Section - START -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+        <script src="assets/js/chat.js"></script>
+
+        <div class="container" id="messagesDiv">
+          <h3>Chat Messages</h2>
+          <p>Looking for a specific file? Ask in the chat below.. :-)</p>
+
         </div>
 
-
+        <!-- Sockets Chat Section - END -->
         <script>
             $(document).ready(function () {
                 $("#file-to-upload-browse, #file-to-upload-fake").on("click", function () {

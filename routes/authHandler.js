@@ -4,7 +4,6 @@ const router = require('express').Router();
 const mysql = require('mysql');
 
 // defining mysql connection details for when we want to connect to the database
-// const con = mysql.createConnection({
 const con = mysql.createPool({
   host: process.env.MYSQL_HOST,
   user: process.env.MYSQL_USER,
@@ -15,7 +14,6 @@ const con = mysql.createPool({
 router.post('/register', (req, res) => {
   const { username } = req.body;
   const { password } = req.body;
-
   if (username && password) {
     con.query('INSERT INTO accounts (username, password) VALUES (?, ?)', [username, password], (error, results, fields) => {
       if (error) {
@@ -46,9 +44,6 @@ router.post('/auth', (req, res) => {
       if (error) {
         console.log(error);
       } else {
-        // console.log(`[ERROR]: ${error}`);
-        // console.log(`[RESULTS]: ${results}`);
-        // console.log(`[FIELDS]: ${fields}`);
         if (results.length > 0) {
           req.session.loggedin = true;
           req.session.username = username;
