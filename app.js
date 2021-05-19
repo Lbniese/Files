@@ -42,7 +42,7 @@ const fs = require('fs');
 // const { send } = require('process');
 // const { res } = require('express');
 
-const server = require('https').createServer(app);
+const server = require('http').createServer(app);
 
 const io = require('socket.io')(server);
 
