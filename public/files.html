@@ -65,8 +65,11 @@
             </section>
 
             <section id="input_zone">
-                <input id="message" class="vertical-align" type="text" />
+                <input id="message" class="vertical-align submitOnEnter" type="text" onkeyup="chatboxCheck();" />
                 <button id="send_message" class="vertical-align btn btn-dark" type="button">Send</button>
+                <div id="chatbox"></div>
+                </div>
+                <br><br><br><br>
             </section>
           <br><br>
         </div>
@@ -74,6 +77,7 @@
 
         <script>
             $(document).ready(function () {
+                /* Submit File - START */
                 $("#file-to-upload-browse, #file-to-upload-fake").on("click", function () {
                     $("#file-to-upload").trigger("click");
                 });
@@ -81,6 +85,8 @@
                     var file_name = this.value.replace(/\\/g, "/").replace(/.*\//, "");
                     $("#file-to-upload-fake").val(file_name);
                 });
+                /* Submit File - END */
+                /* Delete File - START */
                 $(".deleteBtn").on("click", function (event) {
                     console.log("Delete call was made in frontend");
                     let fileName = $(this).attr("data-id");
@@ -94,6 +100,8 @@
                         },
                     });
                 });
+                /* Delete File - END */
+                /* Add rows to table - START */
                 $.get("/getfiles", (data) => {
                     console.log(data);
                     $.each(data, (key, value) => {
@@ -109,6 +117,7 @@
                      `);
                     });
                 });
+                /* Add rows to table - END */
             });
         </script>
     </body>

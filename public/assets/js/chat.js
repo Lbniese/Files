@@ -9,7 +9,7 @@ $(() => {
   const username = $('#username');
   const send_message = $('#send_message');
   const send_username = $('#send_username');
-  const chatroom = $('#chatroom');
+  const chatroom = $('#chatbox');
   const feedback = $('#feedback');
 
   // Emit message

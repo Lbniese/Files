@@ -32,3 +32,16 @@ table {
     cursor: inherit;
     display: block;
   }
+
+
+  #chatbox {
+      background: #343a40;
+      height: 12.5rem;
+      margin-top: 5px;
+      overflow: auto;
+  }
+
+  .message {
+      color: white;
+      padding: 10px;
+  }
