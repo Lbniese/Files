@@ -20,7 +20,6 @@ const storage = multer.diskStorage({
 });
 
 const upload = multer({
-  // dest: 'storage/' // this saves your file into a directory called "storage"
   storage,
 });
 
@@ -45,14 +44,6 @@ router.get('/delete/:file(*)', (req, res) => {
   console.log(`deleting: ${deleteFilePath}`);
   fs.unlink(deleteFilePath, () => {
     console.log(`File deleted: ${deleteFilePath}`);
-    /*
-      res.send({
-        status: '200',
-        responseType: 'string',
-        response: 'success',
-      });
-      */
-    // res.end();
     res.redirect('/files');
   });
 });
@@ -95,7 +86,6 @@ router.get('/getfiles', (req, res) => {
 
   storageArray.forEach((directoryFile) => {
     const storageObject = {
-      // name: directoryFile, size: '', added: '', lastModified: '', created: '',
       name: directoryFile, size: '', added: '', extension: '',
     };
 
@@ -105,19 +95,11 @@ router.get('/getfiles', (req, res) => {
 
     const fileAdded = fs.statSync(`storage/${directoryFile}`).atime;
 
-    // const fileLastModified = fs.statSync(`storage/${directoryFile}`).mtime;
-
-    // const fileCreated = fs.statSync(`storage/${directoryFile}`).ctime;
-
     const fileExtension = path.extname(directoryFile);
 
     storageObject.size = getFileSize(fileSizeInBytes);
 
     storageObject.added = getDateFormat(fileAdded);
-
-    // storageObject.lastModified = getDateFormat(fileLastModified);
-
-    // storageObject.created = getDateFormat(fileCreated);
 
     storageObject.extension = fileExtension;
 
