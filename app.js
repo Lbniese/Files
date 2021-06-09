@@ -22,8 +22,6 @@ const port = process.env.PORT || 8080;
 app.use(session({
   // secret is used to sign the session ID cookie - DEPRECATED
   secret: process.env.SECRET,
-  // cookie.maxAge specifies the number to use when calculating the Expires Set-Cookie Attribute
-  // cookie: { maxAge: 300000 },
   // resave forces the session to be saved back to the session store
   resave: true,
   // saveUnitialized forces the session that is unitialized to be saved in the session store as well
@@ -39,21 +37,27 @@ app.use(express.urlencoded({ extended: true }));
 
 // The 'fs' module enables interacting with the file system
 const fs = require('fs');
-// const { send } = require('process');
-// const { res } = require('express');
 
+// returns http server object with the requestListener being express
+// the requestListener is being executed every time the server gets a request
 const server = require('http').createServer(app);
 
 const io = require('socket.io')(server);
 
-const fileHandlerRouter = require('./routes/fileHandler.js');
+// import auth handler router
 const authHandlerRouter = require('./routes/authHandler.js');
+// import file handler router
+const fileHandlerRouter = require('./routes/fileHandler.js');
+// import ratelimit handler router
+const rateLimitHandlerRouter = require('./routes/rateLimitHandler.js');
 
-app.use(fileHandlerRouter.router);
+// use the imported routes
 app.use(authHandlerRouter.router);
+app.use(fileHandlerRouter.router);
+app.use(rateLimitHandlerRouter.defaultLimiter);
+app.use('/auth/*', rateLimitHandlerRouter.authLimiter); // use a more strict ratelimiter for authentication
 
 // listen to a port and start web server
-// const server = app.listen(port, (error) => {
 server.listen(port, (error) => {
   if (error) {
     console.log(error);
@@ -62,12 +66,14 @@ server.listen(port, (error) => {
   }
 });
 
+// define locations of the different .html pages
 const header = fs.readFileSync(`${__dirname}/public/header.html`, 'utf-8');
 const footer = fs.readFileSync(`${__dirname}/public/footer.html`, 'utf-8');
 const loginpage = fs.readFileSync(`${__dirname}/public/login.html`, 'utf-8');
 const filespage = fs.readFileSync(`${__dirname}/public/files.html`, 'utf-8');
 const registerpage = fs.readFileSync(`${__dirname}/public/register.html`, 'utf-8');
 
+// initialize empty user
 let user = null;
 
 // get call that serves login.html
@@ -75,6 +81,7 @@ app.get('/', (req, res) => {
   res.send(header + loginpage + footer);
 });
 
+// get call that serves the register page
 app.get('/register', (req, res) => {
   res.send(header + registerpage + footer);
 });
@@ -92,15 +99,8 @@ app.get('/files', (req, res) => {
 
 // SOCKET - START
 io.on('connection', (socket) => {
-  // console.log('New user connected');
-
   // default username
   socket.username = user;
-
-  // listen on change_username
-  socket.on('change_username', (data) => {
-    socket.username = data.username;
-  });
 
   // listen on new_message
   socket.on('new_message', (data) => {
@@ -109,7 +109,7 @@ io.on('connection', (socket) => {
   });
 
   // listen on typing
-  socket.on('typing', (data) => {
+  socket.on('typing', () => {
     socket.broadcast.emit('typing', { username: socket.username });
   });
 });
