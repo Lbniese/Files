@@ -99,7 +99,7 @@ router.get('/getfiles', (req, res) => {
       name: directoryFile, size: '', added: '', extension: '',
     };
 
-    console.log(`directory file:${directoryFile}`);
+    console.log(`directory file: ${directoryFile}`);
 
     const fileSizeInBytes = fs.statSync(`storage/${directoryFile}`).size;
 
