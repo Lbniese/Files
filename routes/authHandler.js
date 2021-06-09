@@ -12,6 +12,7 @@ const con = mysql.createPool({
   database: process.env.MYSQL_DB,
 });
 
+// post call handling logic for users looking to register and serving the register.html page
 router.post('/register', (req, res) => {
   const { username } = req.body;
   const { password } = req.body;
@@ -47,9 +48,6 @@ router.post('/auth', (req, res) => {
       if (error) {
         console.log(error);
       } else {
-        // console.log(`[ERROR]: ${error}`);
-        // console.log(`[RESULTS]: ${results}`);
-        // console.log(`[FIELDS]: ${fields}`);
         if (results.length > 0) {
           req.session.loggedin = true;
           req.session.username = username;
