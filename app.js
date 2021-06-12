@@ -22,6 +22,8 @@ const port = process.env.PORT || 8080;
 app.use(session({
   // secret is used to sign the session ID cookie - DEPRECATED
   secret: process.env.SECRET,
+  // maxAge - session lasts for 15min
+  maxAge: 900000,
   // resave forces the session to be saved back to the session store
   resave: true,
   // saveUnitialized forces the session that is unitialized to be saved in the session store as well
