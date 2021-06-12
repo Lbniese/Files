@@ -1,3 +1,5 @@
+// import express's Router() - isolated instance of middleware and routes (mini-application)
+// - can only perform middwalre and routing functions
 const router = require('express').Router();
 
 // import 'mysql' module which is a driver for node js
@@ -17,23 +19,24 @@ router.post('/register', (req, res) => {
   const { username } = req.body;
   const { password } = req.body;
 
+  // checking if both username and password fields have input data
   if (username && password) {
+  // insert data into the database with query
     con.query('INSERT INTO accounts (username, password) VALUES (?, ?)', [username, password], (error, results, fields) => {
       if (error) {
         console.log(error);
+        // we assume the only error that can occur is that username is already in use
         res.send('Username is already taken');
       } else {
+        // redirecting to homepage (login page) no matter what if no errors
         if (results.length > 0) {
           res.redirect('/');
         } else {
-          // console.log(res.send(`Looks like an error occured: ${error}`));
           res.redirect('/');
         }
         res.end();
       }
     });
-    // console.log(res.end());
-    // res.redirect('/');
   } else {
     console.log(res.end());
   }
@@ -43,16 +46,21 @@ router.post('/register', (req, res) => {
 router.post('/auth', (req, res) => {
   const { username } = req.body;
   const { password } = req.body;
+  // checking if both username and password fields have input data
   if (username && password) {
+    // check if username and pass is in db
     con.query('SELECT * FROM accounts WHERE username = ? AND password = ?', [username, password], (error, results, fields) => {
       if (error) {
         console.log(error);
       } else {
         if (results.length > 0) {
+          // if success then set 'loggedin' to true
           req.session.loggedin = true;
+          // setting username data as well which is used in the sockets chat
           req.session.username = username;
           res.redirect('/files');
         } else {
+          // if no result returned we assume there was an error
           console.log(res.send('Incorrect Username and/or Password!'));
         }
         res.end();

@@ -42,6 +42,7 @@ const fs = require('fs');
 // the requestListener is being executed every time the server gets a request
 const server = require('http').createServer(app);
 
+// import socket.io and connect it to the http server 'server'
 const io = require('socket.io')(server);
 
 // import auth handler router
@@ -55,7 +56,6 @@ const rateLimitHandlerRouter = require('./routes/rateLimitHandler.js');
 app.use(authHandlerRouter.router);
 app.use(fileHandlerRouter.router);
 app.use(rateLimitHandlerRouter.defaultLimiter);
-app.use('/auth/*', rateLimitHandlerRouter.authLimiter); // use a more strict ratelimiter for authentication
 
 // listen to a port and start web server
 server.listen(port, (error) => {
@@ -99,7 +99,7 @@ app.get('/files', (req, res) => {
 
 // SOCKET - START
 io.on('connection', (socket) => {
-  // default username
+  // set username as the one we logged in with (auth, from mysql db)
   socket.username = user;
 
   // listen on new_message
@@ -108,10 +108,9 @@ io.on('connection', (socket) => {
     io.sockets.emit('new_message', { message: data.message, username: socket.username });
   });
 
-  // listen on typing
+  // listen on typing - be able to show username of the one typing
   socket.on('typing', () => {
     socket.broadcast.emit('typing', { username: socket.username });
   });
 });
-
 // SOCKET - END
