@@ -68,7 +68,7 @@ router.post('/files', upload.single('file-to-upload'), (req, res) => {
 
 // function to convert bytes to 'human readable' sizes
 // credits: https://stackoverflow.com/a/18650828
-function getFileSize(bytes, decimals = 2) {
+const getFileSize = (bytes, decimals = 2) => {
   if (bytes === 0) return '0 Bytes';
 
   const k = 1024;
@@ -78,7 +78,7 @@ function getFileSize(bytes, decimals = 2) {
   const i = Math.floor(Math.log(bytes) / Math.log(k));
 
   return `${parseFloat((bytes / k ** i).toFixed(dm))} ${sizes[i]}`;
-}
+};
 
 // get-call for fetching all files from the local folder called 'storage'
 router.get('/getfiles', (req, res) => {
