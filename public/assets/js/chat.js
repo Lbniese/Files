@@ -1,14 +1,9 @@
 $(() => {
-  // make connection
-  //const socket = io.connect('https://files1.herokuapp.com/:8080');
-
   const socket = io();
 
   // buttons and inputs
   const message = $('#message');
-  const username = $('#username');
   const send_message = $('#send_message');
-  const send_username = $('#send_username');
   const chatroom = $('#chatbox');
   const feedback = $('#feedback');
 
@@ -22,11 +17,6 @@ $(() => {
     feedback.html('');
     message.val('');
     chatroom.append(`<p class='message'>${data.username}: ${data.message}</p>`);
-  });
-
-  // Emit a username
-  send_username.click(() => {
-    socket.emit('change_username', { username: username.val() });
   });
 
   // Emit typing
