@@ -76,18 +76,18 @@
 
 
         <script>
-            $(document).ready(function () {
+            $(document).ready(() => {
                 /* Submit File - START */
-                $("#file-to-upload-browse, #file-to-upload-fake").on("click", function () {
+                $("#file-to-upload-browse, #file-to-upload-fake").on("click", () => {
                     $("#file-to-upload").trigger("click");
                 });
-                $("#file-to-upload").change(function () {
-                    var file_name = this.value.replace(/\\/g, "/").replace(/.*\//, "");
+                $("#file-to-upload").change(() => {
+                    let file_name = this.value.replace(/\\/g, "/").replace(/.*\//, "");
                     $("#file-to-upload-fake").val(file_name);
                 });
                 /* Submit File - END */
                 /* Delete File - START */
-                $(".deleteBtn").on("click", function (event) {
+                $(".deleteBtn").on("click", (event) => {
                     console.log("Delete call was made in frontend");
                     let fileName = $(this).attr("data-id");
                     console.log(this);
@@ -95,7 +95,7 @@
                     $.ajax({
                         type: "GET",
                         url: "/delete/" + fileName,
-                        success: function (response) {
+                        success: (response) => {
                             console.log(response);
                         },
                     });
