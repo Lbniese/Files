@@ -7,7 +7,7 @@ const mysql = require('mysql');
 
 const bcrypt = require('bcrypt');
 
-// 11 hashes per second
+// salt sounds - the more salt the longer time it takes to bruteforce
 const salt = 11;
 
 // defining mysql connection details for when we want to connect to the database
