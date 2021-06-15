@@ -17,6 +17,7 @@ $(() => {
     feedback.html('');
     message.val('');
     chatroom.append(`<p class='message'>${data.username}: ${data.message}</p>`);
+    chatroom.scrollTop(chatroom[0].scrollHeight);
   });
 
   // Emit typing
