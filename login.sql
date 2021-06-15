@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS `accounts` (
   `password` varchar(255) NOT NULL
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
-INSERT INTO `accounts` (`id`, `username`, `password`) VALUES (1, 'user', 'user');
-INSERT INTO `accounts` (`id`, `username`, `password`) VALUES (2, 'root', 'ascent');
+#INSERT INTO `accounts` (`id`, `username`, `password`) VALUES (1, 'user', '$2b$11$BJDYOCs7cq.PsXg.XACdW.v/hZ910o98jm3ywgsXvmEBuhxLwrMjG');
+#INSERT INTO `accounts` (`id`, `username`, `password`) VALUES (2, 'root', '$2b$11$5dEjvZTU1AhqiqHvTIq1fOPlRJLDr1RlZxU9mUQbd79ekysRHH3Oy');
 
 SELECT * FROM accounts;
