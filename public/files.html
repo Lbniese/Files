@@ -81,7 +81,7 @@
                 $("#file-to-upload-browse, #file-to-upload-fake").on("click", () => {
                     $("#file-to-upload").trigger("click");
                 });
-                $("#file-to-upload").change(() => {
+                $("#file-to-upload").change(function () {
                     let file_name = this.value.replace(/\\/g, "/").replace(/.*\//, "");
                     $("#file-to-upload-fake").val(file_name);
                 });
