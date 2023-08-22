@@ -16,10 +16,9 @@
     "express-rate-limit": "^5.5.1",
     "express-session": "^1.17.1",
     "multer": "^1.4.4",
-    "mysql": "^2.18.1",
     "npm": "^8.11.0",
+    "pg": "^8.11.3",
     "socket.io": "^4.7.2"
   },
-  "devDependencies": {
-      }
+  "devDependencies": {}
 }
