@@ -14,7 +14,7 @@
     "dotenv": "^9.0.2",
     "express": "^4.17.3",
     "express-rate-limit": "^5.5.1",
-    "express-session": "^1.17.1",
+    "express-session": "^1.17.3",
     "multer": "^1.4.4",
     "npm": "^8.11.0",
     "pg": "^8.11.3",
